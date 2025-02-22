@@ -1,108 +1,53 @@
 <template>
-  <VaultCard @close="onBack">
-    <template #header>
-      <div class="flex flex-wrap items-center justify-between w-full px-2 py-3">
-        <div class="w-full flex gap-2 justify-between items-center">
-          <button
-            class="btn btn-square btn-primary btn-outline"
-            @click="onBack"
-          >
-            <Icon
-              name="mdi:chevron-left"
-              size="32"
-            />
-          </button>
-          <slot name="buttons">
-            <div
-              v-if="read_only"
-              class="h-full"
-            >
-              <button
-                class="btn btn-square btn-primary btn-outline"
-                @click="read_only = false"
-              >
-                <Icon
-                  name="mdi:pencil-outline"
-                  size="24"
-                />
-              </button>
-            </div>
-            <div
-              v-else
-              class="flex gap-2 h-full"
-            >
-              <button
-                class="btn btn-square btn-error btn-outline"
-                @click="onBack"
-              >
-                <Icon name="mdi:cancel" />
-                <span class="hidden"> {{ t('abort') }} </span>
-              </button>
-              <button
-                class="btn btn-square btn-success btn-outline"
-                @click="onSubmit"
-              >
-                <Icon name="mdi:check" />
-                <span class="hidden"> {{ t('create') }} </span>
-              </button>
-            </div>
-          </slot>
-        </div>
-
-        <div
-          class="flex flex-col items-center w-full h-14 gap-2"
-          :class="{ '-ml-6': !show }"
+  <VaultCardEdit
+    v-if="vaultEntry.details"
+    :color="currentGroup?.color || 'text-base-content'"
+    :has-changes="hasChanges"
+    :icon="vaultEntry.details?.icon || icon || 'mdi:key-outline'"
+    :title="vaultEntry.details?.title ?? ''"
+    @back="$emit('back')"
+    @close="$emit('close')"
+    @reject="(to) => $emit('reject', to)"
+    @submit="(to) => $emit('submit', to)"
+    v-model:read_only="read_only"
+  >
+    <div class="h-full">
+      <!-- <div class="pt-3"> -->
+      <div
+        id="vaultDetailsId"
+        role="tabpanel"
+        :aria-labelledby="id.details"
+      >
+        <VaultEntryDetails
+          v-if="vaultEntry.details"
+          v-model="vaultEntry.details"
+          :with-copy-button
+          :read_only
         >
-          <Icon
-            :name="
-              vaultEntry.icon || currentGroup?.icon || 'mdi:folder-outline'
-            "
-            size="28"
-          />
-          <h5
-            v-show="read_only"
-            class="max-w-full overflow-hidden whitespace-nowrap"
-          >
-            {{ vaultEntry.title }}
-          </h5>
-        </div>
+        </VaultEntryDetails>
       </div>
-    </template>
 
-    <div class="min-h-full">
-      <div class="pt-3">
-        <div
-          id="vaultDetailsId"
-          role="tabpanel"
-          :aria-labelledby="id.details"
-        >
-          <VaultEntryDetails
-            v-model="vaultEntry"
-            :with-copy-button
-            :read_only
-            @submit="onSubmit"
-          >
-          </VaultEntryDetails>
-        </div>
-
-        <div
-          id="tabs-basic-2"
-          class="hidden"
-          role="tabpanel"
-          :aria-labelledby="id.keyValue"
-        >
-          {{ originally }}
-        </div>
-
-        <div
-          id="tabs-basic-3"
-          class="hidden"
-          role="tabpanel"
-          :aria-labelledby="id.history"
-        >
-          <VaultEntryHistory :history />
-        </div>
+      <div
+        id="tabs-basic-2"
+        class="hidden"
+        role="tabpanel"
+        :aria-labelledby="id.keyValue"
+      >
+        <!--  {{ originally }} -->
       </div>
+
+      <div
+        id="tabs-basic-3"
+        class="hidden h-full"
+        role="tabpanel"
+        :aria-labelledby="id.history"
+      >
+        <VaultEntryHistory
+          v-if="vaultEntry.history"
+          :history="vaultEntry.history"
+        />
+      </div>
+      <!-- </div> -->
 
       <nav
         aria-label="Tabs Vault Entry"
@@ -160,7 +105,7 @@
         </button>
       </nav>
     </div>
-  </VaultCard>
+  </VaultCardEdit>
   <VaultEntryModalSaveChanges
     v-model="showConfirmation"
     @reject="onReject"
@@ -177,17 +122,19 @@ import {
 
 const { t } = useI18n();
 
-const vaultEntry = defineModel<SelectVaultEntry>({ required: true });
+const vaultEntry = defineModel<IVaultEntryComplete>({ required: true });
 
 const { header } = storeToRefs(useUiStore());
 const { show } = storeToRefs(useSidebarStore());
 const { currentGroup } = storeToRefs(useVaultGroupStore());
+//const {hasChanges} = useVaultEntryStore()
 
 watch(
-  vaultEntry,
+  () => vaultEntry.value.details,
   () => {
-    header.value.text = vaultEntry.value.title;
-    header.value.icon = vaultEntry.value.icon || currentGroup.value?.icon;
+    header.value.text = vaultEntry.value.details?.title;
+    header.value.icon =
+      vaultEntry.value.details?.icon || currentGroup.value?.icon;
   },
   { immediate: true }
 );
@@ -202,9 +149,8 @@ const id = reactive({
 const read_only = defineModel<boolean>('read_only', { default: false });
 
 const props = defineProps({
-  history: Array as PropType<SelectVaultEntryHistory[]>,
   icon: String,
-  originally: Object as PropType<SelectVaultEntry>,
+  originally: Object as PropType<IVaultEntryComplete>,
   title: String,
   withCopyButton: Boolean,
 });
@@ -220,24 +166,24 @@ const showConfirmation = ref(false);
 
 const hasChanges = computed(() => {
   console.log('has changes', props.originally, vaultEntry.value);
-  if (!props.originally) {
+  if (!props.originally?.details) {
     if (
-      vaultEntry.value.note?.length ||
-      vaultEntry.value.password?.length ||
-      vaultEntry.value.tags?.length ||
-      vaultEntry.value.title?.length ||
-      vaultEntry.value.url?.length ||
-      vaultEntry.value.urlAliases?.length ||
-      vaultEntry.value.username?.length
+      vaultEntry.value.details?.note?.length ||
+      vaultEntry.value.details?.password?.length ||
+      vaultEntry.value.details?.tags?.length ||
+      vaultEntry.value.details?.title?.length ||
+      vaultEntry.value.details?.url?.length ||
+      vaultEntry.value.details?.urlAliases?.length ||
+      vaultEntry.value.details?.username?.length
     ) {
       return true;
     } else {
       return false;
     }
   }
-  return (
-    JSON.stringify(props.originally ?? {}) !== JSON.stringify(vaultEntry.value)
-  );
+  return false /* 
+    JSON.stringify(props.originally.details) !==
+    JSON.stringify(vaultEntry.value.details) */;
 });
 
 const to = ref<RouteLocationNormalizedLoadedGeneric>();
@@ -268,7 +214,7 @@ const onBack = () => {
   }
 };
 
-onBeforeRouteLeave((_to, _from, next) => {
+/* onBeforeRouteLeave((_to, _from, next) => {
   console.log('check before leave', _to, _from);
   to.value = _to;
   if (isSaved.value || isRejected.value) {
@@ -280,7 +226,7 @@ onBeforeRouteLeave((_to, _from, next) => {
   } else {
     next();
   }
-});
+}); */
 </script>
 
 <i18n lang="json">
@@ -288,12 +234,7 @@ onBeforeRouteLeave((_to, _from, next) => {
   "de": {
     "create": "Anlegen",
     "abort": "Abbrechen",
-    "entry": {
-      "title": "Titel",
-      "username": "Nutzername",
-      "password": "Passwort",
-      "url": "Url"
-    },
+
     "tab": {
       "details": "Details",
       "keyValue": "Extra",
@@ -303,12 +244,7 @@ onBeforeRouteLeave((_to, _from, next) => {
   "en": {
     "create": "Create",
     "abort": "Abort",
-    "entry": {
-      "title": "Title",
-      "username": "Username",
-      "password": "Password",
-      "url": "Url"
-    },
+
     "tab": {
       "details": "Details",
       "keyValue": "Extra",

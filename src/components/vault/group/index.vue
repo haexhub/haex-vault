@@ -1,18 +1,19 @@
 <template>
   <VaultCardEdit
     v-if="vaultGroup"
+    :color="vaultGroup.color ?? 'text-base-content'"
+    :has-changes="hasChanges"
+    :icon="vaultGroup.icon ?? 'mdi:folder-outline'"
     :title="vaultGroup.name ?? ''"
-    @close="onClose"
     @back="$emit('back')"
+    @close="emit('close')"
     @reject="(to) => $emit('reject', to)"
     @submit="(to) => $emit('submit', to)"
-    :icon="vaultGroup.icon ?? 'mdi:folder-outline'"
-    :has-changes="hasChanges"
     v-model:read_only="read_only"
   >
     <div class="flex flex-col gap-4 w-full p-4">
-      changes {{ hasChanges }}
       <UiInput
+        v-show="!read_only"
         :label="t('vaultGroup.name')"
         :placeholder="t('vaultGroup.name')"
         :rules="vaultGroupSchema.name"
@@ -23,6 +24,7 @@
       />
 
       <UiInput
+        v-show="!read_only || vaultGroup.description?.length"
         :read_only
         :label="t('vaultGroup.description')"
         :placeholder="t('vaultGroup.description')"
@@ -87,10 +89,10 @@ const hasChanges = computed(() => {
   return JSON.stringify(props.originally) !== JSON.stringify(vaultGroup.value);
 });
 
-const onClose = () => {
+/* const onClose = () => {
   if (props.originally) vaultGroup.value = { ...props.originally };
   emit('close');
-};
+}; */
 </script>
 
 <i18n lang="json">
@@ -103,6 +105,13 @@ const onClose = () => {
       "color": "Farbe"
     }
   },
-  "en": {}
+  "en": {
+    "vaultGroup": {
+      "name": "Name",
+      "description": "Description",
+      "icon": "Icon",
+      "color": "Color"
+    }
+  }
 }
 </i18n>

@@ -1,7 +1,5 @@
 <template>
   <VaultGroup
-    :title="vaultGroup.name"
-    icon="mdi:folder-edit-outline"
     @submit="onSaveAsync"
     @back="onBackAsync"
     @reject="onRejectAsync"
@@ -106,8 +104,10 @@ const onSaveAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
   }
 };
 
-const onBackAsync = async () =>
-  navigateToGroupEntriesAsync(vaultGroup.value.id);
+const onBackAsync = async () => {
+  if (originally.value) vaultGroup.value = { ...originally.value };
+  await navigateToGroupEntriesAsync(vaultGroup.value.id);
+};
 
 const onRejectAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
   if (originally.value) vaultGroup.value = { ...originally.value };

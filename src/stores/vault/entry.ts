@@ -2,6 +2,8 @@ import { eq, isNull, sql } from 'drizzle-orm';
 import {
   type InsertVaultEntry,
   type SelectVaultEntry,
+  type SelectVaultEntryHistory,
+  type SelectVaultEntryKeyValues,
   vaultEntry,
   vaultEntryHistory,
   vaultGroupEntry,
@@ -83,6 +85,12 @@ const getByGroupAsync = async (groupId?: string | null) => {
   }
 };
 
+export interface IVaultEntryComplete {
+  details: SelectVaultEntry | null;
+  history: SelectVaultEntryHistory[] | null;
+  keyValues: SelectVaultEntryKeyValues[] | null;
+}
+
 const getAsync = async (entryId: string | null) => {
   if (!entryId) return null;
 
@@ -93,13 +101,20 @@ const getAsync = async (entryId: string | null) => {
       throw new Error('Datenbank ist nicht geladen');
     }
 
-    const entry = await currentVault.drizzle
-      .select()
-      .from(vaultEntry)
-      .where(eq(vaultEntry.id, entryId));
+    const details = await currentVault.drizzle.query.vaultEntry.findFirst({
+      where: eq(vaultEntry.id, entryId),
+    });
 
-    console.log('found entry by id', entry);
-    return entry.at(0);
+    if (!details) throw new Error('Kein Eintrag gefunden');
+
+    const history = (await useVaultEntryHistoryStore().getAsync(entryId)) ?? [];
+    const keyValues = (await getKeyValuesAsync(entryId)) ?? [];
+    /* .select()
+      .from(vaultEntry)
+      .where(eq(vaultEntry.id, entryId)); */
+
+    console.log('found entry by id', { details, history, keyValues });
+    return { details, history, keyValues }; //.at(0);
   } catch (error) {
     console.error(error);
     throw error;
@@ -171,3 +186,17 @@ const navigateToEntryAsync = async (entryId: string) =>
       },
     })
   );
+
+const getKeyValuesAsync = async (entryId: string | undefined | null) => {
+  if (!entryId) return null;
+  const { currentVault } = useVaultStore();
+
+  if (typeof currentVault?.database?.close !== 'function') {
+    throw new Error('Datenbank ist nicht geladen');
+  }
+  const keyValues =
+    await currentVault.drizzle.query.vaultEntryKeyValue.findMany({
+      where: eq(vaultEntry.id, entryId),
+    });
+  return keyValues;
+};

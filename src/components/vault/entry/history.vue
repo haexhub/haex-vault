@@ -21,7 +21,10 @@ import { type SelectVaultEntryHistory } from '~/database/schemas/vault';
 
 const props = defineProps({
   entryId: String,
-  history: Array as PropType<SelectVaultEntryHistory[]>,
+  history: {
+    type: Array as PropType<SelectVaultEntryHistory[]>,
+    default: () => [],
+  },
 });
 
 const _history = computed(
@@ -47,12 +50,23 @@ const headers: ITableHeader[] = [
 {
   "de": {
     "changedProperty": "Änderung",
-    "oldValue": "alter Wert",
-    "newValue": "neuer Wert",
     "createdAt": "geändert am",
+    "newValue": "neuer Wert",
+    "oldValue": "alter Wert",
     "password": "Passwort",
-    "username": "Nutzername",
-    "title": "Titel"
+    "title": "Titel",
+    "url": "Url",
+    "username": "Nutzername"
+  },
+  "en": {
+    "changedProperty": "Changes",
+    "createdAt": "changed at",
+    "newValue": "new Value",
+    "oldValue": "old Value",
+    "password": "Password",
+    "title": "Title",
+    "url": "Url",
+    "username": "Username"
   }
 }
 </i18n>

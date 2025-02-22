@@ -1,15 +1,13 @@
 <template>
   <VaultCard>
     <template #header>
-      <div
-        class="flex flex-wrap items-start justify-between w-full px-2 py-3 h-full"
-      >
+      <div class="flex flex-wrap items-start justify-between w-full px-2 py-3">
         <div class="w-full flex gap-2 justify-between items-center">
           <div>
             <button
               v-if="currentGroup?.id"
               class="btn btn-square btn-primary btn-outline"
-              @click="gotoParentGroupAsync"
+              @click="useRouter().back()"
             >
               <Icon
                 name="mdi:chevron-left"
@@ -27,18 +25,24 @@
           </div>
         </div>
         <div
-          class="flex flex-col items-center w-full h-14 gap-2"
+          class="flex flex-col items-center w-full gap-2"
           :style="{ color: currentGroup?.color || '' }"
+          :class="{ '-ml-6': !show }"
         >
           <button @click="navigateToGroupAsync(currentGroup?.id)">
-            <Icon :name="currentGroup?.icon ?? 'mdi:folder-outline'" />
-            <h5>{{ currentGroup?.name ?? currentVault?.name }}</h5>
+            <Icon
+              :name="currentGroup?.icon ?? 'mdi:folder-outline'"
+              size="28"
+            />
+            <h5 class="overflow-hidden whitespace-nowrap">
+              {{ currentGroup?.name ?? currentVault?.name }}
+            </h5>
           </button>
         </div>
       </div>
     </template>
 
-    <div>
+    <div class="px-2">
       <VaultGroupList v-if="entries?.length">
         <VaultGroupListButton
           v-for="entry in entries"
@@ -126,6 +130,7 @@ definePageMeta({
   name: 'vaultGroupEntries',
 });
 
+const { show } = storeToRefs(useSidebarStore());
 const { currentVault } = storeToRefs(useVaultStore());
 const { menu } = storeToRefs(useVaultActionMenuStore());
 const { currentGroupId, currentGroup } = storeToRefs(useVaultGroupStore());
@@ -139,13 +144,6 @@ watchEffect(async () => {
 });
 
 const { t } = useI18n();
-
-const headers: ITableHeader[] = [
-  { 'item-value': 'icon' },
-  { 'item-value': 'title', 'label': t('title') },
-  { 'item-value': 'username', 'label': t('name') },
-  { 'item-value': 'url', 'label': t('url') },
-];
 
 const onSelect = (items: SelectVaultEntry | SelectVaultEntry[]) => {
   console.log('selected', items);

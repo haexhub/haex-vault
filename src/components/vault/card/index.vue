@@ -21,14 +21,6 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  title: String,
-  icon: {
-    type: String,
-    default: '',
-  },
-});
-
 const { show } = storeToRefs(useSidebarStore());
 const emit = defineEmits(['close', 'submit']);
 

@@ -116,3 +116,6 @@ export type SelectVaultEntryHistory = typeof vaultEntryHistory.$inferSelect;
 
 export type InsertVaultGroupEntries = typeof vaultGroupEntry.$inferInsert;
 export type SelectVaultGroupEntries = typeof vaultGroupEntry.$inferSelect;
+
+export type InsertVaultEntryKeyValues = typeof vaultEntryKeyValue.$inferInsert;
+export type SelectVaultEntryKeyValues = typeof vaultEntryKeyValue.$inferSelect;

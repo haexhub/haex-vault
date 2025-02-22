@@ -1,5 +1,8 @@
 <template>
-  <VaultCard @close="onClose">
+  <VaultCard
+    @close="onBack"
+    @submit="onSubmit"
+  >
     <template #header>
       <div class="flex flex-wrap items-center justify-between w-full px-2 py-3">
         <div class="w-full flex gap-2 justify-between items-center">
@@ -33,7 +36,7 @@
             >
               <button
                 class="btn btn-square btn-error btn-outline"
-                @click="onReject"
+                @click="onClose"
               >
                 <Icon name="mdi:cancel" />
                 <span class="hidden"> {{ t('abort') }} </span>
@@ -50,17 +53,19 @@
         </div>
 
         <div
-          class="flex flex-col items-center w-full h-14 gap-2"
+          class="flex flex-col items-center w-full min-h-14 gap-2"
           :class="{ '-ml-6': !show }"
+          :style="{ color }"
         >
           <Icon
             v-if="icon"
             :name="icon"
             size="28"
           />
+
           <h5
             v-show="read_only"
-            class="w-full overflow-hidden whitespace-nowrap"
+            class="overflow-hidden whitespace-nowrap"
           >
             {{ title }}
           </h5>
@@ -68,9 +73,8 @@
       </div>
     </template>
 
-    <div class="min-h-full">
+    <div class="h-full">
       <slot />
-      wantToGoBack {{ wantToGoBack }}
     </div>
   </VaultCard>
   <VaultModalSaveChanges
@@ -87,18 +91,10 @@ const { t } = useI18n();
 
 const { show } = storeToRefs(useSidebarStore());
 
-/* watch(
-  vaultEntry,
-  () => {
-    header.value.text = vaultEntry.value.title;
-    header.value.icon = vaultEntry.value.icon || currentGroup.value?.icon;
-  },
-  { immediate: true }
-); */
-
 const read_only = defineModel<boolean>('read_only', { default: false });
 
 const props = defineProps({
+  color: String,
   hasChanges: Boolean,
   icon: String,
   title: String,
@@ -122,11 +118,11 @@ const wantToGoBack = ref(false);
 const onSubmit = () => {
   showConfirmation.value = false;
   isApprovedForLeave.value = true;
+  emit('submit', to.value);
   if (wantToGoBack.value) {
     wantToGoBack.value = false;
     emit('back');
   }
-  emit('submit', to.value);
 };
 
 const onReject = () => {
@@ -150,12 +146,12 @@ const onBack = () => {
 };
 
 const onClose = () => {
-  if (props.hasChanges) {
+  emit('close');
+  /* if (props.hasChanges) {
     showConfirmation.value = true;
   } else {
     read_only.value = true;
-    emit('close');
-  }
+  } */
 };
 onBeforeRouteLeave((_to, _from, next) => {
   //console.log('check before leave', _to, _from);

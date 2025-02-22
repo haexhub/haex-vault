@@ -1,12 +1,12 @@
 <template>
   <VaultEntry
-    :history="vaultEntryHistory"
     :originally
     :title="t('title')"
     @back="onBackAsync"
     @reject="onRejectAsync"
     @submit="onSaveAsync"
-    icon="mdi:key-outline"
+    @close="onClose"
+    :icon="currentGroup?.icon || ''"
     v-model:read_only="read_only"
     v-model="vaultEntry"
   >
@@ -26,44 +26,47 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const vaultEntry = ref<SelectVaultEntry>({
-  createdAt: '',
-  icon: '',
-  id: '',
-  note: null,
-  password: '',
-  tags: '',
-  title: '',
-  updateAt: null,
-  url: '',
-  urlAliases: null,
-  username: '',
+const vaultEntry = ref<IVaultEntryComplete>({
+  details: {
+    createdAt: '',
+    icon: '',
+    id: '',
+    note: null,
+    password: '',
+    tags: '',
+    title: '',
+    updateAt: null,
+    url: '',
+    urlAliases: null,
+    username: '',
+  },
+  history: [],
+  keyValues: [],
 });
 
-const originally = ref<SelectVaultEntry>();
-const vaultEntryHistory = ref<SelectVaultEntryHistory[]>();
+const originally = ref<IVaultEntryComplete>();
+//const vaultEntryHistory = ref<SelectVaultEntryHistory[]>();
 
 const { read_only } = storeToRefs(useVaultStore());
 const { currentEntryId } = storeToRefs(useVaultEntryStore());
-const { getAsync, updateAsync } = useVaultEntryStore();
+const { getAsync, updateAsync, navigateToEntryAsync } = useVaultEntryStore();
 const { getAsync: getHistoryAsync } = useVaultEntryHistoryStore();
-
-const { currentGroupId } = storeToRefs(useVaultGroupStore());
+const { currentGroup } = storeToRefs(useVaultGroupStore());
 
 const { add } = useSnackbar();
 
 const getVaultEntryAsync = async () => {
   const foundEntry = await getAsync(currentEntryId.value);
-  if (foundEntry) {
-    originally.value = { ...foundEntry };
+  if (foundEntry?.details) {
+    originally.value = JSON.parse(JSON.stringify(foundEntry));
     vaultEntry.value = foundEntry;
   }
 };
 
-const getVaultHistoryAsync = async () => {
+/* const getVaultHistoryAsync = async () => {
   const history = await getHistoryAsync(currentEntryId.value);
   vaultEntryHistory.value = history ?? [];
-};
+}; */
 
 watch(
   currentEntryId,
@@ -81,33 +84,24 @@ watch(
 const localeRoute = useLocaleRoute();
 
 const onSaveAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
-  if (vaultEntry.value && originally.value) {
-    await updateAsync(vaultEntry.value, originally.value);
+  if (vaultEntry.value.details && originally.value?.details) {
+    await updateAsync(vaultEntry.value.details, originally.value.details);
     await getVaultEntryAsync();
-    await getVaultHistoryAsync();
+    //await getVaultHistoryAsync();
 
     if (to) {
       await navigateTo(localeRoute(to));
     } else {
-      await onBackAsync();
+      await navigateToEntryAsync(vaultEntry.value.details.id);
     }
   }
 };
 
-const router = useRouter();
-
 const onBackAsync = async () => {
   try {
     if (read_only.value) {
-      await navigateTo(
-        localeRoute({
-          name: 'vaultGroupEntries',
-          params: {
-            groupId: currentGroupId.value,
-          },
-          query: router.currentRoute.value.query,
-        })
-      );
+      useRouter().back();
+      /* */
     } else {
       read_only.value = true;
     }
@@ -118,13 +112,20 @@ const onBackAsync = async () => {
 
 const onRejectAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
   await getVaultEntryAsync();
-  await getVaultHistoryAsync();
+  //await getVaultHistoryAsync();
 
   if (to) {
     await navigateTo(localeRoute(to));
   } else {
     await onBackAsync();
   }
+};
+
+const onClose = () => {
+  console.log('reset vaule', originally.value);
+  if (originally.value)
+    vaultEntry.value = JSON.parse(JSON.stringify(originally.value));
+  read_only.value = true;
 };
 </script>
 

@@ -7,6 +7,7 @@
       :id
       class="advance-select-toogle flex justify-between grow p-3"
       @click.prevent="toogleMenu"
+      :disabled="read_only"
     >
       <slot
         name="value"
@@ -18,7 +19,8 @@
     </button>
     <button
       @click.prevent="toogleMenu"
-      class="flex items-center p-2 hover:shadow rounded-md hover:bg-primary hover:text-slate-200"
+      class="flex items-center p-2 hover:shadow rounded-md hover:bg-primary hover:text-base-content"
+      :disabled="read_only"
     >
       <i class="i-[material-symbols--keyboard-arrow-down] size-4" />
     </button>
@@ -70,6 +72,7 @@ defineProps({
     type: Array as PropType<T[]>,
     default: () => [],
   },
+  read_only: Boolean,
 });
 const value = defineModel<T>();
 
