@@ -1,0 +1,58 @@
+{
+  "name": "haex-vault",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@egoist/tailwindcss-icons": "^1.9.0",
+    "@nuxt/icon": "^1.10.3",
+    "@nuxtjs/i18n": "^9.2.0",
+    "@nuxtjs/tailwindcss": "^6.13.1",
+    "@pinia/nuxt": "^0.10.1",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-dialog": "~2.2.0",
+    "@tauri-apps/plugin-fs": "~2.2.0",
+    "@tauri-apps/plugin-opener": "^2.2.5",
+    "@tauri-apps/plugin-sql": "~2.2.0",
+    "@tauri-apps/plugin-store": "~2.2.0",
+    "@vueuse/core": "^12.7.0",
+    "@vueuse/nuxt": "^12.7.0",
+    "better-sqlite3": "^11.8.1",
+    "drizzle-orm": "^0.39.3",
+    "flyonui": "^1.3.0",
+    "nuxt": "^3.15.4",
+    "nuxt-snackbar": "^1.3.0",
+    "nuxt-zod-i18n": "^1.11.5",
+    "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
+    "sortablejs": "^1.15.6",
+    "vue": "^3.5.13",
+    "vue-draggable-plus": "^0.6.0",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.308",
+    "@tauri-apps/cli": "^2.2.7",
+    "@types/sortablejs": "^1.15.8",
+    "drizzle-kit": "^0.30.4"
+  },
+  "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "vue-demi",
+      "vue3-snackbar"
+    ]
+  }
+}

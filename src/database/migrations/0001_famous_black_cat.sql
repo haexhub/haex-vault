@@ -1,0 +1,1 @@
+ALTER TABLE `vault_entry` ADD `tags` text;

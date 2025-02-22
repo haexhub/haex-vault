@@ -1,0 +1,145 @@
+<template>
+  <VaultGroup
+    :title="vaultGroup.name"
+    icon="mdi:folder-edit-outline"
+    @submit="onSaveAsync"
+    @back="onBackAsync"
+    @reject="onRejectAsync"
+    @close="onBackAsync"
+    v-model="vaultGroup"
+    v-model:read_only="read_only"
+    :originally
+  >
+    <!-- <template #bottom="{ onSubmit, onClose }">
+      <button
+        class="btn btn-error flex-1 flex-nowrap"
+        @click="onClose"
+        type="button"
+      >
+        {{ t('abort') }}
+        <Icon name="mdi:close" />
+      </button>
+
+      <button
+        class="btn btn-primary flex-1 flex-nowrap"
+        type="button"
+        @click="onSubmit"
+      >
+        {{ t('save') }}
+        <Icon name="mdi:check" />
+      </button>
+    </template> -->
+  </VaultGroup>
+</template>
+
+<script setup lang="ts">
+import type { RouteLocationNormalizedLoadedGeneric } from 'vue-router';
+import { type SelectVaultGroup } from '~/database/schemas/vault';
+
+definePageMeta({
+  name: 'vaultGroupEdit',
+});
+
+const { read_only } = storeToRefs(useVaultStore());
+
+const vaultGroup = ref<SelectVaultGroup>({
+  color: '',
+  description: '',
+  icon: '',
+  id: '',
+  name: '',
+  order: null,
+  parentId: '',
+});
+
+const originally = ref<SelectVaultGroup>();
+
+const onCloseAsync = async () =>
+  navigateToGroupEntriesAsync(vaultGroup.value.id);
+/* {
+  await navigateTo(
+    useLocaleRoute()({
+      name: 'vaultGroupEntries',
+      params: {
+        ...useRouter().currentRoute.value.params,
+      },
+      query: {
+        ...useRouter().currentRoute.value.query,
+      },
+    })
+  );
+}; */
+
+const { currentGroupId } = storeToRefs(useVaultGroupStore());
+const { getAsync, navigateToGroupEntriesAsync } = useVaultGroupStore();
+
+watch(
+  currentGroupId,
+  async () => {
+    console.log('currentGroupId changed', currentGroupId.value);
+    const group = (await getAsync({ groupId: currentGroupId.value }))?.at(0);
+    console.log('found group', group);
+    if (group) {
+      vaultGroup.value = group;
+      originally.value = { ...group };
+    }
+  },
+  { immediate: true }
+);
+
+const { add } = useSnackbar();
+
+const onSaveAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
+  try {
+    const { updateAsync } = useVaultGroupStore();
+    await updateAsync(vaultGroup.value);
+    read_only.value = true;
+    if (to) {
+      return navigateTo(to);
+    }
+  } catch (error) {
+    add({
+      type: 'error',
+      text: JSON.stringify(error),
+    });
+    console.log(error);
+  }
+};
+
+const onBackAsync = async () =>
+  navigateToGroupEntriesAsync(vaultGroup.value.id);
+
+const onRejectAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
+  if (originally.value) vaultGroup.value = { ...originally.value };
+  if (to) return navigateTo(to);
+  else return onBackAsync;
+};
+</script>
+
+<i18n lang="json">
+{
+  "de": {
+    "title": "Gruppe anpassen",
+    "abort": "Abbrechen",
+    "save": "Speichern",
+    "name": {
+      "label": "Name"
+    },
+    "description": {
+      "label": "Beschreibung"
+    }
+  },
+
+  "en": {
+    "title": "Edit Group",
+    "abort": "Abort",
+    "save": "Save",
+    "name": {
+      "label": "Name"
+    },
+    "description": {
+      "label": "Description"
+    }
+  }
+}
+</i18n>
