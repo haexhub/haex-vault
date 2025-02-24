@@ -52,6 +52,7 @@ const { currentEntryId } = storeToRefs(useVaultEntryStore());
 const { getAsync, updateAsync, navigateToEntryAsync } = useVaultEntryStore();
 const { getAsync: getHistoryAsync } = useVaultEntryHistoryStore();
 const { currentGroup } = storeToRefs(useVaultGroupStore());
+const { navigateToGroupEntriesAsync } = useVaultGroupStore();
 
 const { add } = useSnackbar();
 
@@ -62,11 +63,6 @@ const getVaultEntryAsync = async () => {
     vaultEntry.value = foundEntry;
   }
 };
-
-/* const getVaultHistoryAsync = async () => {
-  const history = await getHistoryAsync(currentEntryId.value);
-  vaultEntryHistory.value = history ?? [];
-}; */
 
 watch(
   currentEntryId,
@@ -92,18 +88,21 @@ const onSaveAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
     if (to) {
       await navigateTo(localeRoute(to));
     } else {
-      await navigateToEntryAsync(vaultEntry.value.details.id);
+      if (read_only.value)
+        await navigateToGroupEntriesAsync(currentGroup.value?.id);
+      else await navigateToEntryAsync(vaultEntry.value.details.id);
     }
   }
 };
 
 const onBackAsync = async () => {
   try {
+    vaultEntry.value = JSON.parse(JSON.stringify(originally.value));
+    read_only.value = true;
+    useRouter().back();
     if (read_only.value) {
-      useRouter().back();
       /* */
     } else {
-      read_only.value = true;
     }
   } catch (error) {
     console.log(error);

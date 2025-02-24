@@ -11,50 +11,12 @@
     @submit="(to) => $emit('submit', to)"
     v-model:read_only="read_only"
   >
-    <div class="h-full">
-      <!-- <div class="pt-3"> -->
-      <div
-        id="vaultDetailsId"
-        role="tabpanel"
-        :aria-labelledby="id.details"
-      >
-        <VaultEntryDetails
-          v-if="vaultEntry.details"
-          v-model="vaultEntry.details"
-          :with-copy-button
-          :read_only
-        >
-        </VaultEntryDetails>
-      </div>
-
-      <div
-        id="tabs-basic-2"
-        class="hidden"
-        role="tabpanel"
-        :aria-labelledby="id.keyValue"
-      >
-        <!--  {{ originally }} -->
-      </div>
-
-      <div
-        id="tabs-basic-3"
-        class="hidden h-full"
-        role="tabpanel"
-        :aria-labelledby="id.history"
-      >
-        <VaultEntryHistory
-          v-if="vaultEntry.history"
-          :history="vaultEntry.history"
-        />
-      </div>
-      <!-- </div> -->
-
+    <div class="h-full relative overflow-hidden">
       <nav
         aria-label="Tabs Vault Entry"
         aria-orientation="horizontal"
-        class="tabs tabs-bordered fixed bottom-0 left-0 w-full transition-all duration-700"
+        class="tabs tabs-bordered w-full transition-all duration-700 sticky top-0 z-10 bg-base-200"
         role="tablist"
-        :class="{ 'pl-96': show }"
       >
         <button
           :id="id.details"
@@ -69,7 +31,9 @@
             name="material-symbols:key-outline"
             class="me-2"
           />
-          {{ t('tab.details') }}
+          <span class="hidden sm:block">
+            {{ t('tab.details') }}
+          </span>
         </button>
         <button
           :id="id.keyValue"
@@ -101,9 +65,49 @@
             name="material-symbols:history"
             class="me-2"
           />
-          {{ t('tab.history') }}
+          <span class="hidden sm:block">
+            {{ t('tab.history') }}
+          </span>
         </button>
       </nav>
+
+      <div class="h-full pb-8">
+        <div
+          id="vaultDetailsId"
+          role="tabpanel"
+          :aria-labelledby="id.details"
+          class="h-full"
+        >
+          <VaultEntryDetails
+            v-if="vaultEntry.details"
+            v-model="vaultEntry.details"
+            :with-copy-button
+            :read_only
+          >
+          </VaultEntryDetails>
+        </div>
+
+        <div
+          id="tabs-basic-2"
+          class="hidden"
+          role="tabpanel"
+          :aria-labelledby="id.keyValue"
+        >
+          {{ originally }}
+        </div>
+
+        <div
+          id="tabs-basic-3"
+          class="hidden h-full"
+          role="tabpanel"
+          :aria-labelledby="id.history"
+        >
+          <VaultEntryHistory
+            v-if="vaultEntry.history"
+            :history="vaultEntry.history"
+          />
+        </div>
+      </div>
     </div>
   </VaultCardEdit>
   <VaultEntryModalSaveChanges
@@ -165,7 +169,6 @@ const emit = defineEmits<{
 const showConfirmation = ref(false);
 
 const hasChanges = computed(() => {
-  console.log('has changes', props.originally, vaultEntry.value);
   if (!props.originally?.details) {
     if (
       vaultEntry.value.details?.note?.length ||
@@ -176,14 +179,16 @@ const hasChanges = computed(() => {
       vaultEntry.value.details?.urlAliases?.length ||
       vaultEntry.value.details?.username?.length
     ) {
+      console.log('has changes', props.originally, vaultEntry.value);
       return true;
     } else {
       return false;
     }
   }
-  return false /* 
+  return (
     JSON.stringify(props.originally.details) !==
-    JSON.stringify(vaultEntry.value.details) */;
+    JSON.stringify(vaultEntry.value.details)
+  );
 });
 
 const to = ref<RouteLocationNormalizedLoadedGeneric>();

@@ -53,7 +53,7 @@
         </div>
 
         <div
-          class="flex flex-col items-center w-full min-h-14 gap-2"
+          class="flex flex-col items-center w-full min-h-14 gap-2 py-1"
           :class="{ '-ml-6': !show }"
           :style="{ color }"
         >
@@ -75,6 +75,38 @@
 
     <div class="h-full">
       <slot />
+      <div
+        v-show="!read_only"
+        class="fixed bottom-2 left-0 w-full flex items-center justify-between px-4 md:px-4"
+      >
+        <div
+          class="transition-all duration-500"
+          :class="{ 'pl-96': show }"
+        >
+          <button
+            class="btn btn-square btn-error btn-outline"
+            @click="onClose"
+          >
+            <Icon name="mdi:cancel" />
+            <span class="hidden"> {{ t('abort') }} </span>
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-square btn-success"
+            @click="onSubmit"
+          >
+            <Icon name="mdi:check" />
+            <span class="hidden"> {{ t('create') }} </span>
+          </button>
+        </div>
+        <div></div>
+      </div>
+      <!-- <UiButtonAction
+        class=""
+        icon="mdi:content-save-outline"
+        ><Icon name="mdi:content-save-outline" />
+      </UiButtonAction> -->
     </div>
   </VaultCard>
   <VaultModalSaveChanges
@@ -118,10 +150,12 @@ const wantToGoBack = ref(false);
 const onSubmit = () => {
   showConfirmation.value = false;
   isApprovedForLeave.value = true;
-  emit('submit', to.value);
   if (wantToGoBack.value) {
     wantToGoBack.value = false;
-    emit('back');
+    read_only.value = true;
+    emit('submit');
+  } else {
+    emit('submit', to.value);
   }
 };
 

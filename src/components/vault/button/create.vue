@@ -5,7 +5,7 @@
   >
     <template #trigger>
       <button
-        class="btn btn-primary btn-outline shadow-md btn-lg shrink-0 flex-1 whitespace-nowrap flex-nowrap"
+        class="btn btn-primary btn-outline shadow-md md:btn-lg shrink-0 flex-1 whitespace-nowrap flex-nowrap"
         @click="open = true"
       >
         <Icon name="mdi:plus" />

@@ -1,73 +1,75 @@
 <template>
-  <div
-    class="flex flex-col gap-4 w-full p-4"
-    @keyup.enter="$emit('submit', vaultEntry)"
-  >
-    <UiInput
-      v-if="!read_only"
-      :read_only
-      :check-input="check"
-      :label="t('entry.title')"
-      :placeholder="t('entry.title')"
-      :rules="vaultEntrySchema.title"
-      :with-copy-button="read_only"
-      autofocus
-      ref="titleRef"
-      v-model.trim="vaultEntry.title"
-    />
-
-    <UiInput
-      v-if="!read_only || vaultEntry.username"
-      :read_only
-      :check-input="check"
-      :label="t('entry.username')"
-      :placeholder="t('entry.username')"
-      :rules="vaultEntrySchema.username"
-      :with-copy-button="read_only"
-      v-model.trim="vaultEntry.username"
-    />
-
-    <UiInputPassword
-      v-if="!read_only || vaultEntry.password"
-      :read_only
-      :check-input="check"
-      :rules="vaultEntrySchema.password"
-      :with-copy-button="read_only"
-      v-model.trim="vaultEntry.password"
-    />
-
-    <UiInput
-      v-if="!read_only || vaultEntry.url"
-      :read_only
-      :check-input="check"
-      :label="t('entry.url')"
-      :placeholder="t('entry.url')"
-      :rules="vaultEntrySchema.url"
-      :with-copy-button="read_only"
-      v-model.trim="vaultEntry.url"
+  <div class="h-full overflow-scroll">
+    <div
+      class="flex flex-col gap-4 w-full p-4"
+      @keyup.enter="$emit('submit', vaultEntry)"
     >
-      <template #append>
-        <button
-          v-if="read_only"
-          :class="{ disabled: !vaultEntry.url?.length }"
-          @click="openUrl(`${vaultEntry.url}`)"
-          class="btn btn-outline btn-accent join-item h-auto"
-          type="button"
-        >
-          <Icon name="streamline:web" />
-        </button>
-      </template>
-    </UiInput>
+      <UiInput
+        v-if="!read_only"
+        :read_only
+        :check-input="check"
+        :label="t('entry.title')"
+        :placeholder="t('entry.title')"
+        :rules="vaultEntrySchema.title"
+        :with-copy-button="read_only"
+        autofocus
+        ref="titleRef"
+        v-model.trim="vaultEntry.title"
+      />
 
-    <UiTextarea
-      v-if="!read_only || vaultEntry.note"
-      v-model="vaultEntry.note"
-      :read_only
-      :label="t('entry.note')"
-      :placeholder="t('entry.note')"
-      @keyup.enter.stop
-      class="h-52"
-    />
+      <UiInput
+        v-if="!read_only || vaultEntry.username"
+        :read_only
+        :check-input="check"
+        :label="t('entry.username')"
+        :placeholder="t('entry.username')"
+        :rules="vaultEntrySchema.username"
+        :with-copy-button="read_only"
+        v-model.trim="vaultEntry.username"
+      />
+
+      <UiInputPassword
+        v-if="!read_only || vaultEntry.password"
+        :read_only
+        :check-input="check"
+        :rules="vaultEntrySchema.password"
+        :with-copy-button="read_only"
+        v-model.trim="vaultEntry.password"
+      />
+
+      <UiInput
+        v-if="!read_only || vaultEntry.url"
+        :read_only
+        :check-input="check"
+        :label="t('entry.url')"
+        :placeholder="t('entry.url')"
+        :rules="vaultEntrySchema.url"
+        :with-copy-button="read_only"
+        v-model.trim="vaultEntry.url"
+      >
+        <template #append>
+          <button
+            v-if="read_only"
+            :class="{ disabled: !vaultEntry.url?.length }"
+            @click="openUrl(`${vaultEntry.url}`)"
+            class="btn btn-outline btn-accent join-item h-auto"
+            type="button"
+          >
+            <Icon name="streamline:web" />
+          </button>
+        </template>
+      </UiInput>
+
+      <UiTextarea
+        v-if="!read_only || vaultEntry.note"
+        v-model="vaultEntry.note"
+        :read_only
+        :label="t('entry.note')"
+        :placeholder="t('entry.note')"
+        @keyup.enter.stop
+        class="h-52"
+      />
+    </div>
   </div>
 </template>
 

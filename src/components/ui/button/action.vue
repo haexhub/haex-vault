@@ -11,7 +11,7 @@
         aria-label="Menu"
       >
         <Icon
-          name="mdi:plus"
+          :name="icon"
           size="46"
         />
       </button>
@@ -68,6 +68,10 @@ import type { IActionMenuItem } from './types';
 defineProps({
   menu: {
     type: Array as PropType<IActionMenuItem[]>,
+  },
+  icon: {
+    type: String,
+    default: 'mdi:plus',
   },
 });
 

@@ -119,18 +119,8 @@ const getFolders = (groups: SelectVaultGroup[]) => {
   // Store references to nodes by their IDs
   const nodeMap: Record<string, ITreeItem> = {};
 
-  // Store the root nodes of the tree
-  /* const rootNode: ITreeItem = {
-    name: currentVault.value?.name,
-    type: 'folder',
-    value: '',
-    children: [],
-    id: '',
-  }; */
   const result: ITreeItem[] = [];
-  /* const _groups = JSON.parse(
-    JSON.stringify(groups.value)
-  ) as SelectVaultGroup[]; */
+
   groups
     ?.sort((a, b) => a.order ?? 0 - (b.order ?? 0))
     ?.forEach((group) => {
@@ -140,7 +130,6 @@ const getFolders = (groups: SelectVaultGroup[]) => {
         children: [],
         type: 'folder',
         value: group.id,
-        //isActive: useVaultGroupStore().isGroupActive(group.id),
         order: group.order,
       };
     });
@@ -152,9 +141,6 @@ const getFolders = (groups: SelectVaultGroup[]) => {
     if (group.parentId !== null) {
       nodeMap[group.parentId].children?.push(node);
     } else {
-      //rootNode.children?.push(node);
-      //nodeMap['root'].children?.push(node);
-      //result.at(0)?.children?.push(node);
       result.push(node);
     }
   });
@@ -170,7 +156,7 @@ const navigateToGroupAsync = (
     useLocaleRoute()({
       name: 'vaultGroupEdit',
       params: {
-        ...useRouter().currentRoute.value.params,
+        vaultId: useRouter().currentRoute.value.params.vaultId,
         groupId,
       },
       query: {
@@ -185,7 +171,7 @@ const navigateToGroupEntriesAsync = (groupId?: string | null) =>
     useLocaleRoute()({
       name: 'vaultGroupEntries',
       params: {
-        ...useRouter().currentRoute.value.params,
+        vaultId: useRouter().currentRoute.value.params.vaultId,
         groupId,
       },
       query: {

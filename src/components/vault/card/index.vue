@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="h-full overflow-scroll bg-base-200 py-3">
+    <div class="h-full overflow-scroll bg-base-200">
       <slot />
     </div>
   </div>

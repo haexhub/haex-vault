@@ -3,7 +3,7 @@
     <!-- @close="initDatabase" -->
     <template #trigger>
       <button
-        class="btn btn-primary btn-outline shadow-md btn-lg shrink-0 flex-1"
+        class="btn btn-primary btn-outline shadow-md md:btn-lg shrink-0 flex-1"
         @click="onLoadDatabase"
       >
         <Icon name="mdi:folder-open-outline" />
