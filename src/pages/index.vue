@@ -22,7 +22,7 @@
           v-model:isOpen="passwordPromptOpen"
           :path="vaultPath"
         />
-        <NuxtLink to="/test">Test</NuxtLink>
+        <!-- <NuxtLink to="/test">Test</NuxtLink> -->
         <!-- <button @click="test">test</button>
         <NuxtLinkLocale
           :to="{ name: 'vaultGroup', params: { vaultId: 'test' } }"
