@@ -72,6 +72,7 @@ export const useVaultStore = defineStore(
 
       console.log('try to open db', path, password);
       const db = await Database.load(sqlitePath);
+
       const vaultId = await getVaultIdAsync(sqlitePath);
 
       console.log('opened db', path.split('/').at(-1));
@@ -129,15 +130,10 @@ export const useVaultStore = defineStore(
 
     const refreshDatabaseAsync = async () => {
       console.log('refreshDatabaseAsync');
-      /* if (
-        currentVault.value?.database.path &&
-        !currentVault.value?.database.close
-      ) {
-        await openAsync({
-          path: currentVault.value.path,
-          password: currentVault.value.password,
-        });
-      } */
+      if (!currentVault.value?.database.close) {
+        return navigateTo(useLocaleRoute()({ name: 'vaultOpen' }));
+      }
+
       const { groups, folder, currentGroup } = storeToRefs(
         useVaultGroupStore()
       );

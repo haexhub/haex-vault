@@ -37,28 +37,14 @@
         v-model.trim="vaultEntry.password"
       />
 
-      <UiInput
+      <UiInputUrl
         v-if="!read_only || vaultEntry.url"
-        :read_only
-        :check-input="check"
         :label="t('entry.url')"
         :placeholder="t('entry.url')"
-        :rules="vaultEntrySchema.url"
+        :read_only
         :with-copy-button="read_only"
-        v-model.trim="vaultEntry.url"
-      >
-        <template #append>
-          <button
-            v-if="read_only"
-            :class="{ disabled: !vaultEntry.url?.length }"
-            @click="openUrl(`${vaultEntry.url}`)"
-            class="btn btn-outline btn-accent join-item h-auto"
-            type="button"
-          >
-            <Icon name="streamline:web" />
-          </button>
-        </template>
-      </UiInput>
+        v-model="vaultEntry.url"
+      />
 
       <UiTextarea
         v-if="!read_only || vaultEntry.note"

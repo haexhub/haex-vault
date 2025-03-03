@@ -1,7 +1,8 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq, isNull, sql } from 'drizzle-orm';
 import {
   vaultGroup,
   type InsertVaultGroup,
+  type SelectVaultEntry,
   type SelectVaultGroup,
 } from '~/database/schemas/vault';
 
@@ -23,11 +24,30 @@ export const useVaultGroupStore = defineStore(
 
     const currentGroup = ref<SelectVaultGroup>();
 
-    watch(currentGroupId, () => {
-      currentGroup.value = groups.value.find(
-        (group) => group.id === currentGroupId.value
-      );
+    const currentGroupItems = reactive<{
+      entries: SelectVaultEntry[];
+      groups: SelectVaultGroup[];
+    }>({
+      entries: [],
+      groups: [],
     });
+
+    watch(
+      currentGroupId,
+      async () => {
+        //const { getByParentIdAsync } = useVaultGroupStore();
+        const { getByGroupAsync } = useVaultEntryStore();
+        currentGroup.value = groups.value.find(
+          (group) => group.id === currentGroupId.value
+        );
+        currentGroupItems.groups =
+          (await getByParentIdAsync(currentGroupId.value)) ?? [];
+        currentGroupItems.entries =
+          (await getByGroupAsync(currentGroupId.value)) ?? [];
+        console.log('search current group', groups.value, currentGroup.value);
+      },
+      { immediate: true }
+    );
     const isGroupActive = (id?: string | null) =>
       computed(() => currentGroupId.value == id);
 
@@ -35,8 +55,10 @@ export const useVaultGroupStore = defineStore(
       createAsync,
       currentGroup,
       currentGroupId,
+      currentGroupItems,
       folder,
       getAsync,
+      getByParentIdAsync,
       getFolders,
       groups,
       isGroupActive,
@@ -83,8 +105,8 @@ const updateAsync = async (group: InsertVaultGroup) => {
 };
 
 const getAsync = async (param?: {
-  vaultId?: string | null;
   groupId?: string | null;
+  parentId?: string | null;
 }) => {
   try {
     const { currentVault } = useVaultStore();
@@ -101,10 +123,43 @@ const getAsync = async (param?: {
 
       console.log('found groups by groupId', groups);
       return groups;
+    } else if (param?.parentId === null) {
+      const groups = await currentVault.drizzle
+        .select()
+        .from(vaultGroup)
+        .where(isNull(vaultGroup.parentId))
+        .orderBy(sql`${vaultGroup.order} nulls last`);
+
+      console.log('found groups', groups);
+      return groups;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getByParentIdAsync = async (parentId?: string | null) => {
+  try {
+    const { currentVault } = useVaultStore();
+
+    if (typeof currentVault?.database?.close !== 'function') {
+      return;
+    }
+
+    if (parentId) {
+      const groups = await currentVault.drizzle
+        .select()
+        .from(vaultGroup)
+        .where(eq(vaultGroup.parentId, parentId))
+        .orderBy(sql`${vaultGroup.order} nulls last`);
+
+      console.log('found groups', groups);
+      return groups;
     } else {
       const groups = await currentVault.drizzle
         .select()
         .from(vaultGroup)
+        .where(isNull(vaultGroup.parentId))
         .orderBy(sql`${vaultGroup.order} nulls last`);
 
       console.log('found groups', groups);

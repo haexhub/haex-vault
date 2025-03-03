@@ -25,11 +25,11 @@
           </div>
         </div>
         <div
-          class="flex flex-col items-center w-full gap-2"
+          class="flex flex-col items-center w-full h-full gap-2"
           :style="{ color: currentGroup?.color || '' }"
           :class="{ '-ml-6': !show }"
         >
-          <button @click="navigateToGroupAsync(currentGroup?.id)">
+          <button @click="onGroupActionAsync">
             <Icon
               :name="currentGroup?.icon ?? 'mdi:folder-outline'"
               size="28"
@@ -41,10 +41,10 @@
         </div>
       </div>
     </template>
-
+    aaa {{ currentGroup }} {{ currentGroupId }} aaa
     <div class="px-2">
-      <VaultGroupList v-if="entries?.length">
-        <VaultGroupListButton
+      <UiList v-if="entries?.length">
+        <UiListButton
           v-for="entry in entries"
           class="group"
           @click="navigateToEntryAsync(entry.id)"
@@ -56,8 +56,8 @@
             <h6 class="font-semibold">{{ entry.title }}</h6>
             <span class="text-xs">{{ entry.username }}</span>
           </div>
-        </VaultGroupListButton>
-      </VaultGroupList>
+        </UiListButton>
+      </UiList>
 
       <!-- <UiTable
         v-if="entries?.length"
@@ -160,6 +160,18 @@ const gotoParentGroupAsync = async () => {
       query: useRouter().currentRoute.value.query,
     })
   );
+};
+
+const onGroupActionAsync = async () => {
+  if (currentGroup.value?.id)
+    return navigateToGroupAsync(currentGroup?.value?.id);
+  else
+    return navigateTo(
+      useLocaleRoute()({
+        name: 'settings',
+        query: useRouter().currentRoute.value.query,
+      })
+    );
 };
 </script>
 

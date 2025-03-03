@@ -7,7 +7,7 @@
 
   <div
     :id
-    class="overlay modal overlay-open:opacity-100 hidden modal-middle [--tab-accessibility-limited:false] overflow-scroll"
+    class="overlay modal overlay-open:opacity-100 hidden modal-middle [--tab-accessibility-limited:false] overflow-scroll p-0 sm:p-4"
     role="dialog"
     ref="modalRef"
   >
@@ -19,7 +19,7 @@
           <slot name="title">
             <h3
               v-if="title"
-              class="modal-title"
+              class="modal-title text-base sm:text-lg"
             >
               {{ title }}
             </h3>
@@ -38,7 +38,7 @@
             />
           </button>
         </div>
-        <div class="modal-body py-4">
+        <div class="modal-body text-sm sm:text-base">
           <slot />
         </div>
         <div class="modal-footer flex-wrap">

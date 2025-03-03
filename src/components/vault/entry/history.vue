@@ -1,5 +1,53 @@
 <template>
-  <UiTable
+  <div class="h-full overflow-scroll flex">
+    <UiList v-show="_history.length">
+      <UiListButton v-for="item in _history">
+        <div
+          class="flex items-start bg-slate-100 gap-x-2 w-full h-20 overflow-clip"
+        >
+          <!-- <div class="flex flex-col h-full">
+            <h6 class="text-sm">Änderung</h6>
+            <span>
+              {{ item.changedProperty }}
+            </span>
+          </div> -->
+
+          <div class="flex flex-col justify-between h-full py-2">
+            <h6 class="text-sm whitespace-nowrap bg-orange-200">
+              vorheriger {{ item.changedProperty }}
+            </h6>
+            <UiInput
+              :model-value="item.oldValue"
+              with-copy-button
+            />
+          </div>
+
+          <div class="sm:flex flex-col justify-between h-full py-2 hidden">
+            <h6 class="text-sm">neuer Wert</h6>
+            <UiInput
+              :model-value="item.newValue"
+              with-copy-button
+            />
+          </div>
+
+          <div class="flex flex-col justify-between h-full py-2">
+            <h6 class="text-sm md:text-base bg-orange-200">geändert_am</h6>
+            <span class="bg-red-100 py-1 md:py-2">
+              {{ item.createdAt }}
+            </span>
+          </div>
+        </div>
+      </UiListButton>
+    </UiList>
+
+    <div
+      v-show="!_history.length"
+      class="content-center w-full text-center"
+    >
+      {{ t('noHistory') }}
+    </div>
+  </div>
+  <!-- <UiTable
     v-if="history?.length"
     :headers
     :items="_history"
@@ -12,7 +60,7 @@
         class="min-w-24"
       />
     </template>
-  </UiTable>
+  </UiTable> -->
 </template>
 
 <script setup lang="ts">
@@ -49,6 +97,7 @@ const headers: ITableHeader[] = [
 <i18n lang="json">
 {
   "de": {
+    "noHistory": "Eintrag wurde bisher nicht geändert",
     "changedProperty": "Änderung",
     "createdAt": "geändert am",
     "newValue": "neuer Wert",
@@ -59,6 +108,7 @@ const headers: ITableHeader[] = [
     "username": "Nutzername"
   },
   "en": {
+    "noHistory": "No changes so far",
     "changedProperty": "Changes",
     "createdAt": "changed at",
     "newValue": "new Value",

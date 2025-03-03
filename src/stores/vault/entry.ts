@@ -98,6 +98,8 @@ const getAsync = async (entryId: string | null) => {
     const { currentVault } = useVaultStore();
 
     if (typeof currentVault?.database?.close !== 'function') {
+      await navigateTo(useLocaleRoute()({ name: 'vaultOpen' }));
+      return null;
       throw new Error('Datenbank ist nicht geladen');
     }
 

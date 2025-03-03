@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="currentVault"
-    class="flex flex-col grow"
+    class="flex flex-col grow h-full"
   >
     <button
       class="hover:bg-primary/20 px-4 py-4 text-start"
@@ -74,12 +74,14 @@
       </template>
     </UiTree> -->
 
-    <UiTree2
+    <!-- <UiTree2
       v-model="folder"
       @edit="editGroup"
       @click="goTo"
       @update="onUpdate"
-    />
+    /> -->
+
+    <VaultSidebarGroupsList />
   </div>
 </template>
 
@@ -116,7 +118,6 @@ const onUpdate = async () => {
 };
 
 const goTo = async (groupId?: string) => {
-  console.log('goto');
   await navigateTo(
     useLocalePath()({
       name: 'vaultGroupEntries',

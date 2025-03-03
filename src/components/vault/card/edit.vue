@@ -1,20 +1,32 @@
 <template>
   <VaultCard
-    @close="onBack"
+    @close="onClose"
     @submit="onSubmit"
   >
     <template #header>
       <div class="flex flex-wrap items-center justify-between w-full px-2 py-3">
         <div class="w-full flex gap-2 justify-between items-center">
-          <button
-            class="btn btn-square btn-primary btn-outline"
-            @click="onBack"
-          >
-            <Icon
-              name="mdi:chevron-left"
-              size="32"
-            />
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              class="btn btn-square btn-primary btn-outline"
+              @click="onBack"
+            >
+              <Icon
+                name="mdi:chevron-left"
+                size="32"
+              />
+            </button>
+
+            <button
+              class="btn btn-square btn-error btn-outline"
+              @click="onBack"
+            >
+              <Icon
+                name="mdi:trash-can-outline"
+                size="28"
+              />
+            </button>
+          </div>
           <slot name="buttons">
             <div
               v-if="read_only"
@@ -32,13 +44,13 @@
             </div>
             <div
               v-else
-              class="flex gap-2 h-full"
+              class="gap-2 h-full hidden md:flex"
             >
               <button
                 class="btn btn-square btn-error btn-outline"
                 @click="onClose"
               >
-                <Icon name="mdi:cancel" />
+                <Icon name="mdi:close" />
                 <span class="hidden"> {{ t('abort') }} </span>
               </button>
               <button
@@ -77,7 +89,7 @@
       <slot />
       <div
         v-show="!read_only"
-        class="fixed bottom-2 left-0 w-full flex items-center justify-between px-4 md:px-4"
+        class="fixed bottom-2 left-0 w-full flex items-center justify-between px-4 md:hidden"
       >
         <div
           class="transition-all duration-500"
@@ -87,7 +99,7 @@
             class="btn btn-square btn-error btn-outline"
             @click="onClose"
           >
-            <Icon name="mdi:cancel" />
+            <Icon name="mdi:close" />
             <span class="hidden"> {{ t('abort') }} </span>
           </button>
         </div>
@@ -180,13 +192,14 @@ const onBack = () => {
 };
 
 const onClose = () => {
-  emit('close');
-  /* if (props.hasChanges) {
+  if (props.hasChanges) {
     showConfirmation.value = true;
   } else {
-    read_only.value = true;
-  } */
+    emit('close'); //read_only.value = true;
+  }
 };
+
+const onDelete = () => {};
 onBeforeRouteLeave((_to, _from, next) => {
   //console.log('check before leave', _to, _from);
   to.value = _to;

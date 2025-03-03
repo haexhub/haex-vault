@@ -41,18 +41,22 @@ const { t } = useI18n();
 
 const check = ref(false);
 
-const vaultEntry = ref<SelectVaultEntry>({
-  createdAt: '',
-  id: '',
-  note: '',
-  password: '',
-  title: '',
-  updateAt: null,
-  username: '',
-  url: '',
-  urlAliases: '',
-  tags: '',
-  icon: '',
+const vaultEntry = ref<IVaultEntryComplete>({
+  details: {
+    createdAt: '',
+    id: '',
+    note: '',
+    password: '',
+    title: '',
+    updateAt: null,
+    username: '',
+    url: '',
+    urlAliases: '',
+    tags: '',
+    icon: '',
+  },
+  history: [],
+  keyValues: [],
 });
 
 const errors = ref({});
@@ -62,11 +66,11 @@ const onCreateAsync = async () => {
   try {
     check.value = true;
 
-    if (!vaultEntry.value) return;
-    vaultEntry.value.icon =
-      vaultEntry.value.icon || currentGroup.value?.icon || '';
+    if (!vaultEntry.value.details) return;
+    vaultEntry.value.details.icon =
+      vaultEntry.value.details.icon || currentGroup.value?.icon || '';
     const { createAsync } = useVaultEntryStore();
-    await createAsync(vaultEntry.value);
+    await createAsync(vaultEntry.value.details);
 
     return onCloseAsync();
   } catch (error) {

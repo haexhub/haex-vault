@@ -5,28 +5,37 @@
   >
     {{ t('dialog.question') }}
     <template #buttons>
-      <button
-        class="btn btn-outline btn-error focus:bg-primary"
+      <UiButton
+        class="btn-outline btn-error focus:bg-primary"
         tabindex="10"
         @click="$emit('reject')"
       >
-        {{ t('dialog.reject') }}
-      </button>
-      <button
-        class="btn btn-outline focus:bg-primary"
+        <Icon name="mdi:cancel" />
+        <span class="hidden sm:block">
+          {{ t('dialog.reject') }}
+        </span>
+      </UiButton>
+      <UiButton
+        class="btn-outline focus:bg-primary"
         tabindex="11"
         ref="abortButtonRef"
         @click="showConfirmation = false"
       >
-        {{ t('dialog.abort') }}
-      </button>
-      <button
-        class="btn btn-outline btn-success"
+        <Icon name="mdi:close" />
+        <span class="hidden sm:block">
+          {{ t('dialog.abort') }}
+        </span>
+      </UiButton>
+      <UiButton
+        class="btn-outline btn-success"
         tabindex="12"
         @click="$emit('submit')"
       >
-        {{ t('dialog.save') }}
-      </button>
+        <Icon name="mdi:check" />
+        <span class="hidden sm:block">
+          {{ t('dialog.save') }}
+        </span>
+      </UiButton>
     </template>
   </UiDialog>
 </template>
@@ -36,9 +45,10 @@ const showConfirmation = defineModel<boolean>();
 const abortButtonRef = useTemplateRef('abortButtonRef');
 
 const { t } = useI18n();
+const { currentScreenSize } = storeToRefs(useUiStore());
 
 onUpdated(() => {
-  abortButtonRef.value?.focus();
+  abortButtonRef.value?.$el.focus();
 });
 
 defineEmits(['submit', 'reject']);

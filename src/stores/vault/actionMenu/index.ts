@@ -24,7 +24,7 @@ export const useVaultActionMenuStore = defineStore('vaultActionMenu', () => {
     },
     {
       label: t('vaultActionMenu.entry.create'),
-      icon: 'iconoir:key-plus',
+      icon: 'mdi:key-plus',
       to: {
         name: 'vaultEntryCreate',
         params: { groupId: useVaultGroupStore().currentGroupId },

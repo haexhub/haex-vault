@@ -6,7 +6,7 @@
     :icon="vaultGroup.icon ?? 'mdi:folder-outline'"
     :title="vaultGroup.name ?? ''"
     @back="$emit('back')"
-    @close="emit('close')"
+    @close="$emit('close')"
     @reject="(to) => $emit('reject', to)"
     @submit="(to) => $emit('submit', to)"
     v-model:read_only="read_only"
@@ -58,14 +58,14 @@ import {
 } from '~/database/schemas/vault';
 
 const { t } = useI18n();
-
+const showConfirmation = ref(false);
 const vaultGroup = defineModel<SelectVaultGroup>({ required: true });
 const read_only = defineModel<boolean>('read_only');
 const props = defineProps({
   originally: Object as PropType<SelectVaultGroup>,
 });
 
-const emit = defineEmits<{
+defineEmits<{
   submit: [to?: RouteLocationNormalizedLoadedGeneric];
   close: [void];
   back: [void];

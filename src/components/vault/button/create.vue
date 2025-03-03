@@ -36,19 +36,19 @@
     </div>
 
     <template #buttons>
-      <button
-        class="btn btn-error"
+      <UiButton
+        class="btn-error"
         @click="onClose"
       >
         {{ t('abort') }}
-      </button>
+      </UiButton>
 
-      <button
-        class="btn btn-primary"
+      <UiButton
+        class="btn-primary"
         @click="onCreate"
       >
         {{ t('create') }}
-      </button>
+      </UiButton>
     </template>
   </UiDialog>
 </template>

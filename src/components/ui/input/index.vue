@@ -14,7 +14,7 @@
           <Icon :name="prependIcon" />
         </span>
 
-        <div class="grow relative">
+        <div class="relative w-full">
           <input
             :id
             :name="name ?? id"
@@ -22,6 +22,12 @@
             :type
             :autofocus
             class="input input-floating peer join-item"
+            :class="{
+              'input-sm':
+                currentScreenSize === 'sm' ||
+                currentScreenSize === '' ||
+                currentScreenSize === 'xs',
+            }"
             v-bind="$attrs"
             v-model="input"
             ref="inputRef"
@@ -53,14 +59,27 @@
 
       <slot name="append" />
 
-      <button
+      <UiButton
+        v-if="withCopyButton"
+        class="btn-outline btn-accent h-auto"
+        @click="copy(`${input}`)"
+      >
+        <Icon :name="copied ? 'mdi:check' : 'mdi:content-copy'" />
+      </UiButton>
+      <!-- <button
         v-if="withCopyButton"
         class="btn btn-outline btn-accent join-item h-auto"
+        :class="{
+          'btn-sm':
+            currentScreenSize === 'sm' ||
+            currentScreenSize === '' ||
+            currentScreenSize === 'xs',
+        }"
         @click="copy(`${input}`)"
         type="button"
       >
         <Icon :name="copied ? 'mdi:check' : 'mdi:content-copy'" />
-      </button>
+      </button> -->
     </fieldset>
 
     <span
@@ -78,7 +97,6 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
 import { type ZodSchema } from 'zod';
 
 const inputRef = useTemplateRef('inputRef');
@@ -144,6 +162,7 @@ const input = defineModel<string | number | undefined | null>({
   required: true,
 });
 
+const { currentScreenSize } = storeToRefs(useUiStore());
 onMounted(() => {
   if (props.autofocus && inputRef.value) inputRef.value.focus();
 });

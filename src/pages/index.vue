@@ -22,7 +22,7 @@
           v-model:isOpen="passwordPromptOpen"
           :path="vaultPath"
         />
-        <!-- <NuxtLink :to="{ name: 'test42' }">Test</NuxtLink> -->
+        <NuxtLink to="/test">Test</NuxtLink>
         <!-- <button @click="test">test</button>
         <NuxtLinkLocale
           :to="{ name: 'vaultGroup', params: { vaultId: 'test' } }"
@@ -95,14 +95,13 @@
 </template>
 
 <script setup lang="ts">
-import { NuxtLink } from '#components';
 import { openUrl } from '@tauri-apps/plugin-opener';
 
 const passwordPromptOpen = ref(false);
 const vaultPath = ref('');
 
 definePageMeta({
-  name: 'openVault',
+  name: 'vaultOpen',
 });
 
 const { t } = useI18n();

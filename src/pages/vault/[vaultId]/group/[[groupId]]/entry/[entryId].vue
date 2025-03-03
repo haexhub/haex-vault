@@ -5,7 +5,7 @@
     @back="onBackAsync"
     @reject="onRejectAsync"
     @submit="onSaveAsync"
-    @close="onClose"
+    @close="onCloseAsync"
     :icon="currentGroup?.icon || ''"
     v-model:read_only="read_only"
     v-model="vaultEntry"
@@ -15,10 +15,6 @@
 
 <script setup lang="ts">
 import type { RouteLocationNormalizedLoadedGeneric } from 'vue-router';
-import {
-  type SelectVaultEntryHistory,
-  type SelectVaultEntry,
-} from '~/database/schemas/vault';
 
 definePageMeta({
   name: 'vaultEntryEdit',
@@ -50,7 +46,6 @@ const originally = ref<IVaultEntryComplete>();
 const { read_only } = storeToRefs(useVaultStore());
 const { currentEntryId } = storeToRefs(useVaultEntryStore());
 const { getAsync, updateAsync, navigateToEntryAsync } = useVaultEntryStore();
-const { getAsync: getHistoryAsync } = useVaultEntryHistoryStore();
 const { currentGroup } = storeToRefs(useVaultGroupStore());
 const { navigateToGroupEntriesAsync } = useVaultGroupStore();
 
@@ -83,7 +78,6 @@ const onSaveAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
   if (vaultEntry.value.details && originally.value?.details) {
     await updateAsync(vaultEntry.value.details, originally.value.details);
     await getVaultEntryAsync();
-    //await getVaultHistoryAsync();
 
     if (to) {
       await navigateTo(localeRoute(to));
@@ -120,11 +114,14 @@ const onRejectAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
   }
 };
 
-const onClose = () => {
+const onCloseAsync = async () => {
   console.log('reset vaule', originally.value);
   if (originally.value)
     vaultEntry.value = JSON.parse(JSON.stringify(originally.value));
-  read_only.value = true;
+
+  if (read_only.value)
+    return navigateToGroupEntriesAsync(currentGroup.value?.id);
+  else read_only.value = true;
 };
 </script>
 

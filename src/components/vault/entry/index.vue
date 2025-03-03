@@ -110,14 +110,15 @@
       </div>
     </div>
   </VaultCardEdit>
-  <VaultEntryModalSaveChanges
+  <!-- <VaultModalSaveChanges
     v-model="showConfirmation"
     @reject="onReject"
     @submit="onSubmit"
-  />
+  /> -->
 </template>
 
 <script setup lang="ts">
+import { HSTabs } from 'flyonui/flyonui';
 import type { RouteLocationNormalizedLoadedGeneric } from 'vue-router';
 import {
   type SelectVaultEntry,

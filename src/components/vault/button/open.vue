@@ -21,20 +21,20 @@
     />
 
     <template #buttons>
-      <button
-        class="btn btn-error"
+      <UiButton
+        class="btn-error"
         @click="onClose"
       >
         {{ t('abort') }}
-      </button>
+      </UiButton>
 
-      <button
+      <UiButton
         type="submit"
-        class="btn btn-primary"
+        class="btn-primary"
         @click="onOpenDatabase"
       >
         {{ t('open') }}
-      </button>
+      </UiButton>
     </template>
   </UiDialog>
 </template>

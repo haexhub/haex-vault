@@ -24,7 +24,6 @@ export const useSidebarStore = defineStore('sidebarStore', () => {
   });
 
   const router = useRouter();
-  const route = useRoute();
 
   const { closeAsync } = useVaultStore();
 

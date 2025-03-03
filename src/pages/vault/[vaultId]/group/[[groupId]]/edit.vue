@@ -3,7 +3,7 @@
     @submit="onSaveAsync"
     @back="onBackAsync"
     @reject="onRejectAsync"
-    @close="onBackAsync"
+    @close="onCloseAsync"
     v-model="vaultGroup"
     v-model:read_only="read_only"
     :originally
@@ -52,8 +52,10 @@ const vaultGroup = ref<SelectVaultGroup>({
 
 const originally = ref<SelectVaultGroup>();
 
-const onCloseAsync = async () =>
-  navigateToGroupEntriesAsync(vaultGroup.value.id);
+const onCloseAsync = async () => {
+  if (read_only.value) return navigateToGroupEntriesAsync(vaultGroup.value.id);
+  else read_only.value = true;
+};
 /* {
   await navigateTo(
     useLocaleRoute()({
@@ -71,19 +73,15 @@ const onCloseAsync = async () =>
 const { currentGroupId } = storeToRefs(useVaultGroupStore());
 const { getAsync, navigateToGroupEntriesAsync } = useVaultGroupStore();
 
-watch(
-  currentGroupId,
-  async () => {
-    console.log('currentGroupId changed', currentGroupId.value);
-    const group = (await getAsync({ groupId: currentGroupId.value }))?.at(0);
-    console.log('found group', group);
-    if (group) {
-      vaultGroup.value = group;
-      originally.value = { ...group };
-    }
-  },
-  { immediate: true }
-);
+const getGroupAsync = async () => {
+  const group = (await getAsync({ groupId: currentGroupId.value }))?.at(0);
+  console.log('found group', group);
+  if (group) {
+    vaultGroup.value = group;
+    originally.value = { ...group };
+  }
+};
+watch(currentGroupId, async () => getGroupAsync(), { immediate: true });
 
 const { add } = useSnackbar();
 
@@ -91,6 +89,7 @@ const onSaveAsync = async (to?: RouteLocationNormalizedLoadedGeneric) => {
   try {
     const { updateAsync } = useVaultGroupStore();
     await updateAsync(vaultGroup.value);
+    await getGroupAsync();
     read_only.value = true;
     if (to) {
       return navigateTo(to);

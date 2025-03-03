@@ -1,7 +1,7 @@
 <template>
   <div class="fixed z-10">
     <div
-      class="dropdown relative inline-flex [--placement:bottom] max-sm:[--placement:bottom-end] [--strategy:absolute]"
+      class="dropdown relative inline-flex [--placement:top] [--strategy:absolute]"
     >
       <button
         :id

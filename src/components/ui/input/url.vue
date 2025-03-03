@@ -1,19 +1,24 @@
 <template>
   <UiInput
-    :check-input
-    :label="label || t('password')"
-    :placeholder="placeholder || t('password')"
-    :rules
-    :type="type"
     :autofocus
-    v-model="value"
+    :check-input="checkInput"
+    :label="label || t('url')"
+    :placeholder="placeholder || t('url')"
+    :read_only
+    :rules
+    :with-copy-button
+    v-model.trim="value"
   >
     <template #append>
       <UiButton
+        v-if="read_only"
+        @click="openUrl(`${value}`)"
         class="btn-outline btn-accent h-auto"
-        @click="tooglePasswordType"
+        :class="{
+          disabled: !value?.length,
+        }"
       >
-        <Icon :name="type === 'password' ? 'mdi:eye' : 'mdi:eye-off'" />
+        <Icon name="streamline:web" />
       </UiButton>
     </template>
   </UiInput>
@@ -21,11 +26,12 @@
 
 <script setup lang="ts">
 import type { ZodSchema } from 'zod';
+import { openUrl } from '@tauri-apps/plugin-opener';
 
 const { t } = useI18n();
 const { currentScreenSize } = storeToRefs(useUiStore());
 
-const value = defineModel<string | number | null | undefined>();
+const value = defineModel<string | null | undefined>();
 
 defineProps({
   label: String,
@@ -33,22 +39,18 @@ defineProps({
   checkInput: Boolean,
   rules: Object as PropType<ZodSchema>,
   autofocus: Boolean,
+  withCopyButton: Boolean,
+  read_only: Boolean,
 });
-
-const type = ref<'password' | 'text'>('password');
-
-const tooglePasswordType = () => {
-  type.value = type.value === 'password' ? 'text' : 'password';
-};
 </script>
 
 <i18n lang="json">
 {
   "de": {
-    "password": "Passwort"
+    "url": "Url"
   },
   "en": {
-    "password": "Password"
+    "url": "Url"
   }
 }
 </i18n>
