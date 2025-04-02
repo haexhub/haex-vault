@@ -1,6 +1,6 @@
 # Preperation
 
-install:s
+install:
 - [nodejs](https://nodejs.org/en/download)
 - [tauri](https://v2.tauri.app/start/prerequisites/)
 - [rust](https://v2.tauri.app/start/prerequisites/#rust)
