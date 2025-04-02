@@ -12,6 +12,8 @@
     "fs:default",
     "opener:allow-open-url",
     "opener:default",
-    "store:default"
+    "store:default",
+    "sql:default",
+    "sql:allow-execute"
   ]
 }

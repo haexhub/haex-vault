@@ -3,7 +3,9 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-
+  
+  telemetry: false,
+  
   modules: [
     '@pinia/nuxt',
     'nuxt-zod-i18n',
