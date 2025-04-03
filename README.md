@@ -1,7 +1,3 @@
-Okay, hier ist die Übersetzung des Textes ins Englische. Ich habe versucht, den Ton und die technischen Details so genau wie möglich zu übertragen.
-
----
-
 # HaexHub - The European "Everything App"
 
 ## Vision
