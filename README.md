@@ -1,5 +1,3 @@
-Absolut! Hier ist die überarbeitete Übersetzung deines Textes, die die Änderungen berücksichtigt:
-
 HaexHub - The European "Everything App"
 Vision
 
