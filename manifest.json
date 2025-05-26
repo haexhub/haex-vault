@@ -1,0 +1,20 @@
+{
+  "name": "Pokemon",
+  "id": "pokedemo",
+  "entry": "./index.html",
+  "author": "haex",
+  "version": "1.0",
+  "url": "https://haex.de",
+  "permissions": {
+    "database": {
+      "read": ["haex_permissions", "demo_table", "foobar"],
+      "write": ["haex_vault", "foobar"],
+      "create": ["demo_extension"]
+    },
+    "http": ["google.de", "https://ok.de"],
+    "filesystem": {
+      "read": ["$appDir/demo/*", "demo_table", "foobar", "haex_permissions"],
+      "write": ["$appDir/demo/*"]
+    }
+  }
+}
